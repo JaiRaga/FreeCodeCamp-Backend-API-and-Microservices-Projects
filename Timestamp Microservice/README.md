@@ -12,8 +12,8 @@
 
 #### Example usage:
 
-- https://glitch.com/~fish-fright-qs9tkv1hvm/api/timestamp/2015-12-15
-- https://glitch.com/~fish-fright-qs9tkv1hvm/api/timestamp/1450137600000
+- https://fish-fright-qs9tkv1hvm.glitch.me/api/timestamp/2015-12-15
+- https://fish-fright-qs9tkv1hvm.glitch.me/api/timestamp/1450137600000
 
 #### Example output:
 
