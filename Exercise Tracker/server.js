@@ -11,7 +11,7 @@ const Exercise = require("./models/Exercise");
 const mongoose = require("mongoose");
 const connectDB = async () => {
   try {
-    mongoose.connect(db, {
+    await mongoose.connect(db, {
       useCreateIndex: true,
       useFindAndModify: false,
       useNewUrlParser: true,
@@ -78,6 +78,7 @@ app.post("/api/exercise/new-user", async (req, res) => {
   }
 });
 
+//GEt all users
 app.get("/api/exercise/users", async (req, res) => {
   try {
     const user = await User.find({});
@@ -87,7 +88,67 @@ app.get("/api/exercise/users", async (req, res) => {
   }
 });
 
-app.post("/api/exercise/add", async (req, res) => {});
+// Add exercise to a user
+app.post("/api/exercise/add", async (req, res) => {
+  try {
+    if (!req.body.date) req.body.date = new Date();
+
+    const exercise = new Exercise({
+      ...req.body
+    });
+
+    console.log(exercise);
+
+    await exercise.save();
+
+    await exercise.populate("userId").execPopulate();
+
+    const { username, _id } = exercise.userId;
+    const { description, duration, date } = exercise;
+
+    res.send({
+      username,
+      _id,
+      description,
+      duration,
+      date: date.toDateString()
+    });
+  } catch (e) {
+    res.send(e);
+  }
+});
+
+// Retrieve full exercise log of any USER
+app.get("/api/exercise/log", async (req, res) => {
+  try {
+    let { userId, from, to, limit } = req.query;
+    console.log(userId);
+
+    const user = await User.find({ _id: userId });
+
+    to = to ? new Date(to) : new Date(2200, 12, 12);
+    from = from ? new Date(from) : 0;
+
+    const exercises = await Exercise.find(
+      {
+        userId,
+        date: { $lt: to, $gt: from }
+      },
+      null,
+      { limit: parseInt(limit) }
+    );
+    console.log(exercises, from, to, limit);
+
+    res.send({
+      _id: userId,
+      username: user[0].username,
+      count: exercises.length,
+      log: exercises
+    });
+  } catch (e) {
+    console.log(e);
+  }
+});
 
 const listener = app.listen(process.env.PORT || 3000, () => {
   console.log("Your app is listening on port " + listener.address().port);

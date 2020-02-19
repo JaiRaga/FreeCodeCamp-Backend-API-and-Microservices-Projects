@@ -1,25 +1,22 @@
 const mongoose = require("mongoose");
+const validator = require("validator");
 const { Schema } = mongoose;
 
 const exerciseSchema = new Schema({
-  userId: {
-    type: String,
-    required: true
-  },
   description: {
     type: String,
     required: true
   },
   duration: {
-    type: Number,
+    type: String,
     required: true
   },
   date: {
     type: Date
   },
-  owner: {
+  userId: {
     type: Schema.Types.ObjectId,
-    ref: "User",
+    ref: "user",
     required: true
   }
 });
